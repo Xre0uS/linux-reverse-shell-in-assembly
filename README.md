@@ -31,7 +31,7 @@ Or print it with `\x` notation for C programs:
 
 The shellcode is 80 bytes in size.
 
-There's a section to set uid to root, it's commented out since it won't work if the account executing the shellcode is not root, uncomment if root will be executing.
+There's a section to set uid to root, it's commented out since it won't work if the user executing the shellcode is not root, uncomment if root will be executing.
 
 I've also included a simple script to convert IP and port to hexadecimal in little endian to easily modify the reverse shell.
 
